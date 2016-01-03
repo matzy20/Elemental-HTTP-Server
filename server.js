@@ -1,6 +1,6 @@
 var http = require ('http');
 var fs = require ('fs');
-var querystring = ('querystring');
+var querystring = require('querystring');
 
 var server = http.createServer(function elementsServer (req, res){
   req.setEncoding('utf8');
@@ -24,7 +24,7 @@ var server = http.createServer(function elementsServer (req, res){
       break;
 
       case 'POST':
-
+        postRequests(req.url);
       break;
     }
   });
@@ -50,13 +50,13 @@ var server = http.createServer(function elementsServer (req, res){
       }
   }
 
-  function postRequests (filename){
+  function postRequests (){
 
     var elementName;
     var elementSymbol;
     var elementAtomicNumber;
     var elementDescription;
-
+    var filename = bodyData.elementName;
     var path = 'public/' + filename + '.html';
     var htmlString =
 
@@ -64,22 +64,24 @@ var server = http.createServer(function elementsServer (req, res){
     '<html lang="en">' +
     '<head>' +
       '<meta charset="UTF-8">' +
-      '<title>The Elements - ' + elementName +'</title>' +
+      '<title>The Elements - ' + bodyData.elementName +'</title>' +
       '<link rel="stylesheet" href="css/styles.css">' +
     '</head>' +
     '<body>' +
-      '<h1>' + elementName + '</h1>' +
-      '<h2>' + elementSymbol + '</h2>'+
-      '<h3>' + elementAtomicNumber + '</h3>' +
-      '<p>' + elementDescription + '</p>' +
+      '<h1>' + bodyData.elementName + '</h1>' +
+      '<h2>' + bodyData.elementSymbol + '</h2>'+
+      '<h3>' + bodyData.elementAtomicNumber + '</h3>' +
+      '<p>' + bodyData.elementDescription + '</p>' +
       '<p><a href="/">back</a></p>' +
     '</body>' +
     '</html>';
-
-    fs.readDir(path, function (err, data) {
+    //readDir returns an ARRAY of html file names
+    fs.readdir(path, function (err, data) {
       //good habit to console status of err
       if (err){
         console.log(err);
+        /*unable to create or find path, something wrong with server,
+        so very bad*/
         res.statusCode = 500;
         res.statusMessage = "Something went very wrong";
         //use return to be explicit
@@ -88,7 +90,16 @@ var server = http.createServer(function elementsServer (req, res){
         });
       } else {
         if (data.indexOf(path) === -1){
-
+          return fs.writeFile(path, htmlString, function (err){
+            console.log(htmlString);
+            res.statusCode = 200;
+            res.contentType = 'application/json';
+            //method converts a JavaScript value to a JSON string
+            res.contentBody = JSON.stringify({
+              "success" : true
+            });
+            res.end();
+          });
         }
       }
     });
