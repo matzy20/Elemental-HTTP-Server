@@ -56,27 +56,27 @@ var server = http.createServer(function elementsServer (req, res){
     var elementSymbol;
     var elementAtomicNumber;
     var elementDescription;
-    var filename = bodyData.elementName;
-    var path = 'public/' + filename + '.html';
+    var filename = bodyData.elementName + '.html';
+    var filePath = 'public/';
     var htmlString =
 
-    '<!DOCTYPE html>' +
-    '<html lang="en">' +
-    '<head>' +
-      '<meta charset="UTF-8">' +
-      '<title>The Elements - ' + bodyData.elementName +'</title>' +
-      '<link rel="stylesheet" href="css/styles.css">' +
-    '</head>' +
-    '<body>' +
-      '<h1>' + bodyData.elementName + '</h1>' +
-      '<h2>' + bodyData.elementSymbol + '</h2>'+
-      '<h3>' + bodyData.elementAtomicNumber + '</h3>' +
-      '<p>' + bodyData.elementDescription + '</p>' +
-      '<p><a href="/">back</a></p>' +
-    '</body>' +
+    '<!DOCTYPE html>' + '\n' +
+    '<html lang="en">' + '\n' +
+    '<head>' + '\n' +
+      '<meta charset="UTF-8">' + '\n' +
+      '<title>The Elements - ' + bodyData.elementName +'</title>' + '\n' +
+      '<link rel="stylesheet" href="css/styles.css">' + '\n' +
+    '</head>' + '\n' +
+    '<body>' + '\n' +
+      '<h1>' + bodyData.elementName + '</h1>' + '\n' +
+      '<h2>' + bodyData.elementSymbol + '</h2>'+ '\n' +
+      '<h3>' + bodyData.elementAtomicNumber + '</h3>' + '\n' +
+      '<p>' + bodyData.elementDescription + '</p>' + '\n' +
+      '<p><a href="/">back</a></p>' + '\n' +
+    '</body>' + '\n' +
     '</html>';
     //readDir returns an ARRAY of html file names
-    fs.readdir(path, function (err, data) {
+    fs.readdir(filePath, function (err, data) {
       //good habit to console status of err
       if (err){
         console.log(err);
@@ -89,8 +89,8 @@ var server = http.createServer(function elementsServer (req, res){
            return res.end(_404);
         });
       } else {
-        if (data.indexOf(path) === -1){
-          return fs.writeFile(path, htmlString, function (err){
+        if (data.indexOf(filename) === -1){
+          return fs.writeFile(filePath + filename, htmlString, function (err){
             console.log(htmlString);
             res.statusCode = 200;
             res.contentType = 'application/json';
